@@ -42,7 +42,7 @@ def getOddDegVerts(adj_matrix):
     O = set()
     for city in adj_matrix.keys():
         edges = len(adj_matrix[city])
-        if edges % 2 == 0:
+        if edges % 2 != 0:
             O.add(city)
     return O
 
