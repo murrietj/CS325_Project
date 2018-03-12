@@ -33,7 +33,7 @@ def mst_prim(adj_matrix):
             T[u][parents[u]] = T[parents[u]][u] = keys[u]
         del keys[u]
         for city, dist in adj_matrix[u].items():
-            if((city in keys) and adj_matrix[u][city] < keys[city]):
+            if((city in keys) and adj_matrix[u][city] < keys[mcity]):
                 parents[city] = u
                 keys[city] = dist
     return T
@@ -45,6 +45,30 @@ def getOddDegVerts(adj_matrix):
         if edges % 2 != 0:
             O.add(city)
     return O
+
+def minWeightMatching(T, O):
+    M = set()
+    while O:
+        u = O.pop()
+        length = float("inf")
+        closest = 0
+        for v in O:
+            if u != v and T[u][v] < length:
+                length = T[u][v]
+                closest = v
+        M.append((u, closest))
+        O.remove(closest)
+    return M
+
+def combineGraphs(T, M):
+    H = T
+    while M:
+        matchPair = M.pop()
+        H.append(matchPair)
+        M.remove(matchPair)
+    return H
+
+
 
 # open input file:
 fileName = sys.argv[1]
@@ -76,10 +100,10 @@ T = mst_prim(G)
 O = getOddDegVerts(T)
 
 # Find a minimum-weight perfect matching M in the induced subgraph given by the vertices from O
-# TODO
+M = minWeightMatching(T, O)
 
 # Combine the edges of M and T to form a connected multigraph H in which each vertex has even degree
-# TODO
+H = combineGraphs(T, M)
 
 # Form an Eulerian circuit in H
 # TODO
