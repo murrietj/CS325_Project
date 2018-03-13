@@ -8,7 +8,7 @@
 #   solve the tsp and outputs the solution to a file with '.tour' appended to the
 #   input file name.
 
-import sys
+from sys import argv
 from math import sqrt
 
 class City(object):
@@ -46,7 +46,7 @@ def getOddDegVerts(adj_matrix):
             O.add(city)
     return O
 
-def minWeightMatching(G, T, O):
+def minWeightMatching(G, O):
     M = set()
     while O:
         u = O.pop()
@@ -69,7 +69,7 @@ def combineGraphs(T, M):
 
 
 # open input file:
-fileName = sys.argv[1]
+fileName = argv[1]
 inputFile = open(fileName, 'r')
 
 # create a complete graph G (adjacency matrix) from the file
@@ -98,7 +98,7 @@ T = mst_prim(G)
 O = getOddDegVerts(T)
 
 # Find a minimum-weight perfect matching M in the induced subgraph given by the vertices from O
-M = minWeightMatching(G, T, O)
+M = minWeightMatching(G, O)
 
 # Combine the edges of M and T to form a connected multigraph H in which each vertex has even degree
 H = combineGraphs(T, M)
