@@ -152,17 +152,15 @@ M = minWeightMatching(G, O)
 
 # Combine the edges of M and T to form a connected multigraph H in which each vertex has even degree
 H = combineGraphs(T, M)
-print (H)
 
 # Form an Eulerian circuit in H
 E = eulerCircuit(H, [], '0')
 
 # Make the circuit found in the previous step into a Hamiltonian circuit by skipping repeated vertices
 C = hamCycle(E)
-print(C)
 
+# Get the total distance in the Hamiltonian circuit
 total = getDistance(G, C)
-print(total)
 
 # print results in output file
 outputFile = open(fileName + '.tour', 'w')
