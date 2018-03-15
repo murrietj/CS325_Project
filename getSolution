@@ -1,0 +1,18 @@
+#!/bin/bash
+
+inputFile=tsp_example_3.txt
+outputFile=$inputFile.tour
+maxDist=1966355
+
+if [ -f $outputFile ]
+then
+    x=$(head -n1 $outputFile)
+else
+    x=9999999
+fi
+
+while [ $x -gt $maxDist ]
+do
+    python3 tsp_christofides.py $inputFile
+    x=$(head -n1 $outputFile)
+done
