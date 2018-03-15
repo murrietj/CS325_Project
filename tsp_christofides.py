@@ -8,9 +8,12 @@
 #   solve the tsp and outputs the solution to a file with '.tour' appended to the
 #   input file name.
 
-from copy import deepcopy
 from sys import argv
 from math import sqrt
+from time import time
+
+# get start time
+start = time()
 
 class City(object):
     def __init__(self, c_id=None, x=None, y=None):
@@ -68,41 +71,19 @@ def combineGraphs(T, M):
         H[u][v] = H[v][u] = dist
     return H
 
-# helper function for eulerCircuit                
-def dfs(H, u, visited):
-    count = 1
-    u = int(u)
-    visited[u] = True
-    u = str(u)
-    for i in H[u]:
-        i = int(i)
-        if visited[i] == False:
-            count = count + dfs(H, i, visited)         
-    return count
-
-# helper function for eulerCircuit 
-def checkBridge(H, u, v):
-    R = deepcopy(H) 
-    if len(H[u]) == 1:
-        return False 
-    elif len(H[u]) == 0:
-        return True
-    else:
-        visited = [False]*len(H)
-        count1 = dfs(H, u, visited)
-        del R[u][v]
-        visited = [False]*len(R)
-        count2 = dfs(R, u, visited)
-        if count1 > count2: return True
-        else: return False 
-    
-def eulerCircuit(H, E, u):
-    E.append(u)
-    for v in list(H[u]):
-        if (checkBridge(H, u, v) == False):
-            del H[u][v]
-            del H[v][u]
-            eulerCircuit(H, E, v)            
+def eulerCircuit(H):
+    E = []
+    currCity = list(H.keys())[0]
+    currPath = [currCity]
+    while(currPath):
+        if(len(H[currCity])):
+            nextCity = H[currCity].popitem()[0]
+            del H[nextCity][currCity]
+            currPath.append(nextCity)
+            currCity = nextCity
+        else:
+            E.append(currCity)
+            currCity = currPath.pop()
     return E
             
 def hamCycle(E):
@@ -114,9 +95,9 @@ def hamCycle(E):
          
 def getDistance(G, C):
     total = 0
-    for i in range(0, len(C)-1):
-        total += (G[C[i]][C[i+1]])
-    total += (G[C[i]]['0'])
+    for i in range(len(C) - 1):
+        total += G[ C[i] ][ C[i + 1] ]
+    total += G[ C[i + 1] ][ C[0] ]
     return total
             
 # open input file:
@@ -128,16 +109,17 @@ G = {}
 cities = [] 
 nextLine = inputFile.readline()
 while (nextLine):
-	c_id, c_x, c_y = nextLine.split()
-	newCity = City(c_id, int(c_x), int(c_y))
-	cities.append(newCity)
-	G[newCity.id] = {}
+    c_id, c_x, c_y = nextLine.split()
+    newCity = City(c_id, int(c_x), int(c_y))
+    cities.append(newCity)
+    G[newCity.id] = {}
 
-	# add distances to new city to adjacency matrix
-	for city in cities:
-		G[city.id][newCity.id] = G[newCity.id][city.id] = distance(city, newCity)
+    # add distances to new city to adjacency matrix
+    for city in cities:
+        G[city.id][newCity.id] = G[newCity.id][city.id] = distance(city, newCity)
 
-	nextLine = inputFile.readline()
+    nextLine = inputFile.readline()
+
 # close input file
 inputFile.close()
 
@@ -154,7 +136,7 @@ M = minWeightMatching(G, T, O)
 H = combineGraphs(T, M)
 
 # Form an Eulerian circuit in H
-E = eulerCircuit(H, [], '0')
+E = eulerCircuit(H)
 
 # Make the circuit found in the previous step into a Hamiltonian circuit by skipping repeated vertices
 C = hamCycle(E)
@@ -170,3 +152,10 @@ for i in C:
 
 # close output file
 outputFile.close()
+
+# get end time
+end = time()
+
+# print total distance and run time
+print("Dist:\t" + str(total))
+print("Time:\t" + str(end - start))

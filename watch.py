@@ -22,7 +22,7 @@ def main(arr, secs_to_wait):
       sys.stderr.write("[%s] kill\n" % pipe.pid)
       os.kill(pipe.pid, SIGKILL)
 
-main(sys.argv[1:], 5*60)
+main(sys.argv[1:], 3*60)
 
 # usage:
 #   ./watch.py <program> <arguments>
